@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pastebin Clone</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📝 Pastebin</h1>
+            <p>Create a paste and share a link to view it.</p>
+        </header>
+
+        <main>
+            <textarea id="content" placeholder="Enter your text here..." spellcheck="false"></textarea>
+            
+            <div class="constraints">
+                <div class="input-field">
+                    <label for="ttl">Expiry (Seconds)</label>
+                    <input type="number" id="ttl" placeholder="e.g., 60" min="1">
+                </div>
+                <div class="input-field">
+                    <label for="views">Max Views</label>
+                    <input type="number" id="views" placeholder="e.g., 5" min="1">
+                </div>
+            </div>
+
+            <button id="submitBtn">Create Paste</button>
+
+            <div id="result" class="hidden">
+                <p><strong>Shareable URL:</strong></p>
+                <div class="url-box">
+                    <input type="text" id="shareUrl" readonly>
+                    <button id="copyBtn">Copy</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
