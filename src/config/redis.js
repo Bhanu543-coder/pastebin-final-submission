@@ -5,16 +5,21 @@ dotenv.config();
 
 const redisUrl = process.env.REDIS_URL;
 
-// This configuration is optimized for Vercel's serverless environment
+if (!redisUrl) {
+    console.error("❌ REDIS_URL is missing!");
+}
+
 const redis = new Redis(redisUrl, {
-    connectTimeout: 10000, // Wait up to 10s to connect
-    maxRetriesPerRequest: 0, // Serverless functions should fail fast if the DB is down
+    connectTimeout: 10000, // 10 seconds to allow for cloud handshake
+    maxRetriesPerRequest: 1, // Fail fast so the function doesn't hang
     tls: {
-        // Essential for Upstash secure connections
-        rejectUnauthorized: false 
+        rejectUnauthorized: false // Necessary for many cloud Redis providers
     }
 });
 
-redis.on('error', (err) => console.error('❌ Redis Connection Error:', err.message));
+redis.on('error', (err) => {
+    // This will show up in your Vercel logs
+    console.error('❌ Redis Connection Error:', err.message);
+});
 
 export default redis;
