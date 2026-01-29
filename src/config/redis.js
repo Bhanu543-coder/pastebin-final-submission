@@ -3,31 +3,21 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const redis = new Redis(process.env.REDIS_URL);
+const redisUrl = process.env.REDIS_URL;
 
-redis.on('connect', () => {
-  console.log('✅ Successfully connected to Upstash Redis');
+// Ensure the URL is valid before connecting
+if (!redisUrl) {
+    console.error("❌ REDIS_URL is missing in environment variables");
+}
+
+const redis = new Redis(redisUrl, {
+    connectTimeout: 10000, // Give it 10 seconds to connect
+    lazyConnect: true,     // Don't connect until the first command is sent
+    tls: {
+        rejectUnauthorized: false // Required for some cloud providers like Upstash
+    }
 });
 
-redis.on('error', (err) => {
-  console.error('❌ Redis Connection Error:', err);
-});
+redis.on('error', (err) => console.error('❌ Redis Error:', err.message));
 
 export default redis;
-// import Redis from 'ioredis';
-// import dotenv from 'dotenv';
-
-// dotenv.config();
-
-// const redis = new Redis(process.env.REDIS_URL, {
-//   connectTimeout: 10000, // 10 seconds timeout
-//   maxRetriesPerRequest: 3,
-//   retryStrategy(times) {
-//     const delay = Math.min(times * 50, 2000);
-//     return delay;
-//   },
-// });
-
-// redis.on('error', (err) => console.error('❌ Redis Error:', err.message));
-
-// export default redis;
