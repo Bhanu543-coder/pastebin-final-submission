@@ -22,10 +22,8 @@ router.post('/', validatePasteInput, async (req, res) => {
     expires_at: expiresAt
   };
 
-  // Save data as JSON string
   await redis.set(`paste:${id}`, JSON.stringify(pasteData));
   
-  // Set physical Redis expiry if TTL exists for auto-cleanup
   if (ttl_seconds) {
     await redis.expire(`paste:${id}`, ttl_seconds);
   }
@@ -36,9 +34,7 @@ router.post('/', validatePasteInput, async (req, res) => {
   });
 });
 
-// GET /api/pastes/:id for the JSON API requirement
 router.get('/:id', async (req, res) => {
-    // ... logic same as /p/:id but returns JSON instead of HTML ...
 });
 
 export default router;

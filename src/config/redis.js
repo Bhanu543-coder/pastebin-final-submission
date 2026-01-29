@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-// ioredis automatically handles the rediss:// protocol for TLS
 const redis = new Redis(process.env.REDIS_URL);
 
 redis.on('connect', () => {

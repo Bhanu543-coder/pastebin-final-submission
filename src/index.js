@@ -11,10 +11,8 @@ const __dirname = path.dirname(__filename);
 const app = express();
 app.use(express.json());
 
-// 1. Serve the frontend files from the public folder
 app.use(express.static(path.join(__dirname, '../public')));
 
-// 2. Health check (Requirement)
 app.get('/api/healthz', async (req, res) => {
   try {
     await redis.ping();
@@ -24,10 +22,8 @@ app.get('/api/healthz', async (req, res) => {
   }
 });
 
-// 3. API Routes
 app.use('/api/pastes', pasteRoutes);
 
-// 4. View a paste (HTML Requirement)
 app.get('/p/:id', async (req, res) => {
   const { id } = req.params;
   const data = await redis.get(`paste:${id}`);
@@ -37,18 +33,16 @@ app.get('/p/:id', async (req, res) => {
   const paste = JSON.parse(data);
   const now = getNow();
 
-  // Check constraints before showing
+  
   if ((paste.expires_at && new Date(paste.expires_at) < now) || 
       (paste.max_views && paste.current_views + 1 > paste.max_views)) {
     await redis.del(`paste:${id}`);
     return res.status(404).send("This paste is no longer available.");
   }
 
-  // Increment view count
   paste.current_views += 1;
   await redis.set(`paste:${id}`, JSON.stringify(paste));
 
-  // Render safely (XSS protection)
   const safeContent = paste.content
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
